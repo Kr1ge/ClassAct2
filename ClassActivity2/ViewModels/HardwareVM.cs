@@ -10,12 +10,12 @@ namespace ClassActivity2.ViewModels
 {
     public class HardwareVM
     {
-        public IEnumerable<SelectListItem> Vendors { get; set; }
-        public int SelectedVendorID { get; set; }
+        public IEnumerable<SelectListItem> Employees { get; set; }
+        public int SelectedEmployeeID { get; set; }
         public DateTime DateFrom { get; set; }
         public DateTime DateTo { get; set; }
 
-        public lgvendor vendor { get; set; }
+        public lgemployee employee { get; set; }
         public List<IGrouping<string,ReportRecord>> results { get; set; }
         public Dictionary<string, double> chartData { get; set; }
     }
@@ -24,8 +24,10 @@ namespace ClassActivity2.ViewModels
     {
         public string OrderDate { get; set; }
         public double Total { get; set; }
+        public string Customer { get; set; }
+
         public string Employee { get; set; }
-        public int VendorID { get; set; }
+        
 
     }
 }

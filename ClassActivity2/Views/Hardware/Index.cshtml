@@ -5,18 +5,101 @@
 @{
     ViewBag.Title = "Index";
 }
+<style>
+        .button {
+      border-radius: 4px;
+      background-color: #f4511e;
+      border: none;
+      color: #FFFFFF;
+      text-align: center;
+      font-size: 18px;
+      /*padding: 20px;*/
+      width: 150px;
+      transition: all 0.5s;
+      cursor: pointer;
+      margin: 5px;
+      height: 30px;
+    }
 
-<h1>Stock Purchased from Vendor:</h1>
+    .button span {
+      cursor: pointer;
+      display: inline-block;
+      position: relative;
+      transition: 0.5s;
+    }
+
+    .button span:after {
+      content: '\00bb';
+      position: absolute;
+      opacity: 0;
+      top: 0;
+      right: -20px;
+      transition: 0.5s;
+    }
+
+    .button:hover span {
+      padding-right: 25px;
+    }
+
+    .button:hover span:after {
+      opacity: 1;
+      right: 0;
+    }
+</style>
+
+<h1 style="font-family: 'Bookman Old Style'">Employee Sales:</h1>
 <div class="criteria">
     @using (Html.BeginForm("DoReport", "Hardware", FormMethod.Post))
     {
-        <label>Select Vendor</label>
-        @Html.DropDownListFor()
+        <label>Select Employee</label>
+        @Html.DropDownListFor(p => p.SelectedEmployeeID, Model.Employees, "--- Please Select ---", new { @class = "form-control" })
         <label>From</label>
-        @Html.TextBoxFor(m => m.DateFrom, "yyyy-MM-dd", new { @Value = "2013-08-01", @type = "date", @class = "form-control" })
+        @Html.TextBoxFor(m => m.DateFrom, "yyyy-MM-dd", new { @Value = "2011-01-01", @type = "date", @class = "form-control" })
         <label>To</label>
-        @Html.TextBoxFor(m => m.DateTo, "yyyy-MM-dd", new { @Value = "2013-08-30", @type = "date", @class = "form-control" })
-        <br />
-        <input type="submit" value="Generate" class="btn btn-primary" />
+        @Html.TextBoxFor(m => m.DateTo, "yyyy-MM-dd", new { @Value = "2011-01-31", @type = "date", @class = "form-control" })
+        <br />        
+        <button class="button" type="submit"><span>Generate</span></button>
     }
 </div>
+<hr />
+
+@if (Model.employee != null)
+{    
+    <div class="panel">
+        @if (Model.chartData != null)
+        {            
+            <img src="@Url.Action("EmployeeSalesChart", "Hardware")" />
+        }
+
+    </div>
+
+    <div class="panel panel-info">
+        @foreach (var group in Model.results)
+        {
+            <h4>@group.Key:</h4>
+            <table class="table table-striped">
+                <tr>
+                    <th>Order Date</th>
+                    <th>Amount</th>
+                    <th>Employee Responsible</th>
+                </tr>
+                @foreach(ReportRecord groupItem in group)
+                {
+                    <tr>
+                        <td>@groupItem.OrderDate</td>
+                        <td>@groupItem.Total.ToString("C", CultureInfo.CurrentCulture)</td>
+                        <td>@groupItem.Employee</td>
+                    </tr>
+                }
+                <tr>
+                    <td><strong>Total</strong></td>
+                    <td><strong>@group.Sum(item => item.Total).ToString("C", CultureInfo.CurrentCulture)</strong></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+            <hr />
+        }
+        <h3>Grand Total: <strong>@Model.results.Sum(group => group.Sum(item => item.Total)).ToString("C", CultureInfo.CurrentCulture)</strong></h3>
+    </div>
+}
